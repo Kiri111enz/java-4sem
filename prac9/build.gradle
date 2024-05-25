@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+}
+
+group 'org.prac_1'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    archiveName "stepa.jar"
+    manifest {
+        attributes(
+                "Main-Class": "org.prac_1.Main"
+        )
+    }
+}
+
+tasks.register("copyDockerJar",Copy) {
+    dependsOn jar
+    from jar
+    into "docker"
+}
+
+tasks.register("runDocker") {
+    dependsOn "copyDockerJar"
+    doLast {
+        exec {
+            commandLine "docker", "build", "-t", "haha", "./docker"
+        }
+        exec {
+            commandLine "docker", "run", "--rm", "haha"
+        }
+    }
+}
+
+runDocker {
+
+}
+
